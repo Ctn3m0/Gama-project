@@ -3,4 +3,6 @@
 Student name: Ta Quang Hieu
 ID: M22ICT002
 
-Status: Dear teacher, I am having some family issuse so I will start my project at most in 25/2 
+Status: I don't know how to dodge the obstacle, the code has been writen in the TestModel file
+
+
