@@ -11,7 +11,7 @@ model NewModel
 global {
 	float max_carrying_capacity <- 10.0;
 	
-	float max_cabbage_eat <- 2.0;
+	float obstacle_distance <- 1500.0;
 	
 	file grid_data <- file("../includes/hab10.asc");
 
@@ -23,15 +23,42 @@ global {
 	init {
 		create goat number: nb_goat;
 		create goal;
-		create obstacle number: 30;
+		create obstacle number: 100;
 	}
 }
 
 species goat skills: [moving]{
+	
+	list<obstacle> neighbors update: obstacle at_distance obstacle_distance;
+	
+//	reflex dodge when: not empty(neighbors) {
+//		geometry d <- 10 around first(neighbors);
+//		do goto target: goal[0].location speed: rnd(30.0, 100.0) on: d;
+////		location <- any_location_in(one_of(obstacle));
+//	}
+	
 	reflex move {
-		plot p <- first(plot overlapping self.location);
-		p.red <- 150;
-		do goto target: goal[0].location speed: rnd(30.0, 100.0);
+		if not empty(neighbors) {
+//			geometry d <- 10 around first(neighbors);
+//			do goto target: goal[0].location speed: rnd(30.0, 100.0) on: d;
+			plot p <- first(plot overlapping self.location);
+//			write "====================";
+//			write first(neighbors).location;
+//			write plot overlapping first(neighbors).location;
+//			write first(neighbors).shape;
+//			write neighbors;
+//			write first(neighbors);
+			p.red <- 150;
+			plot next_plot <- one_of(p.neighbors where (each.location != first(neighbors).location));
+//			plot next_plot <- one_of(p.neighbors where (each.location not in plot overlapping first(neighbors).location));
+//			plot next_plot <- one_of(p.neighbors where (each.location != any_location_in(round(5))));
+			location <- next_plot.location;
+//			do move speed: rnd(30.0, 100.0) heading: heading + 70 bounds: d;
+		} else {
+			plot p <- first(plot overlapping self.location);
+			p.red <- 150;
+			do goto target: goal[0].location speed: rnd(30.0, 100.0);
+		}
 	}
 	
 	aspect default {
@@ -47,7 +74,7 @@ species goal {
 
 species obstacle {
 	aspect default {
-		draw arc(3000,45,90) color: #yellow;
+		draw arc(3000,45,90, false) color: #yellow;
 	}
 }
 
