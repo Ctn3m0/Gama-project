@@ -11,7 +11,9 @@ model NewModel
 global {
 	float max_carrying_capacity <- 10.0;
 	
-	float obstacle_distance <- 1500.0;
+	float obstacle_distance <- 2000.0;
+	
+	float goat_distance <- 1000.0;
 	
 	file grid_data <- file("../includes/hab10.asc");
 
@@ -36,20 +38,34 @@ species goat skills: [moving]{
 //		do goto target: goal[0].location speed: rnd(30.0, 100.0) on: d;
 ////		location <- any_location_in(one_of(obstacle));
 //	}
+
+	list<goat> neighbors_friend update: goat at_distance obstacle_distance;
+
+
+//	reflex follow when: length(neighbors_friend) > 0 {
+//		do goto target: neighbors_friend[0].location speed: rnd(30.0, 100.0);
+//	}
 	
 	reflex move {
 		if not empty(neighbors) {
 //			geometry d <- 10 around first(neighbors);
 //			do goto target: goal[0].location speed: rnd(30.0, 100.0) on: d;
 			plot p <- first(plot overlapping self.location);
-//			write "====================";
-//			write first(neighbors).location;
-//			write plot overlapping first(neighbors).location;
+			write "====================";
+			write first(neighbors).location;
+			write plot partially_overlapping first(neighbors).location;
+//			write plot partially_overlapping points_in(first(neighbors));
+			list<plot> a <- plot overlapping first(neighbors).location;
+			write a;
+			write plot overlapping first(neighbors).location;
 //			write first(neighbors).shape;
 //			write neighbors;
 //			write first(neighbors);
 			p.red <- 150;
-			plot next_plot <- one_of(p.neighbors where (each.location != first(neighbors).location));
+//			plot next_plot <- one_of(p.neighbors where (each.location != first(neighbors).location));
+//			plot next_plot <- (p.neighbors where (each.location != first(neighbors).location)) with_min_of max(distance_to(each.location, self.location), distance_to(each.location, goal[0].location));
+			plot next_plot <- (p.neighbors where (each.location != first(neighbors).location)) with_max_of max(distance_to(each.location, first(neighbors).location), distance_to(each.location, self.location));
+//			plot next_plot <- one_of(p.neighbors where (each.location != points_in(first(neighbors))));
 //			plot next_plot <- one_of(p.neighbors where (each.location not in plot overlapping first(neighbors).location));
 //			plot next_plot <- one_of(p.neighbors where (each.location != any_location_in(round(5))));
 			location <- next_plot.location;
