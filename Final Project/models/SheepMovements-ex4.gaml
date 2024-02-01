@@ -1,14 +1,16 @@
 /**
-* Name: SheepMovementsex3
+* Name: TestModel
 * Based on the internal empty template. 
 * Author: ctn3m0
 * Tags: 
 */
 
 
-model Ex3
+model TestModel
 
 global {
+	string ACTION_ADD_OBSTACLE <- "add obstacle";
+	
 	float max_carrying_capacity <- 10.0;
 	
 	float obstacle_distance <- 500.0;
@@ -24,6 +26,8 @@ global {
 	float goat_distance <- 1000.0;
 	
 	file grid_data <- file("../includes/hab10.asc");
+	
+	string chosen_btn_action <- "";
 
 	
 	geometry shape <- envelope(grid_data);
@@ -34,6 +38,12 @@ global {
 
 	
 	init {
+		create button {
+			color <- #red;
+			btn_action <- ACTION_ADD_OBSTACLE;
+			location <- {4000,2000};
+		}
+		
 		create obstacle number: 100{
 			shape <- flip(0.6) ? rectangle(1000+rnd(2000), 1000+rnd(2000)) : circle(2000 + rnd(1000));
 			ozone <- (square(3000) intersection world.shape) intersection circle(3000);
@@ -236,8 +246,29 @@ grid plot neighbors: 4 file: grid_data{
 	}
 }
 
+species button {
+	rgb color;
+	geometry shape <- square(20000#m);
+	
+	string btn_action;
+	
+	aspect default{
+		draw shape color: color;
+		draw 20.0 around shape color: (chosen_btn_action = btn_action) ? #red : #black;
+	}
+}
+
 experiment runme {
+	action activate_button {
+		
+	}
+	
 	output {
+		display button_display {
+			species button;
+			event #mouse_down action: activate_button;
+		}
+		
 		display biomass {
 			grid plot ;
 			species goat;
@@ -252,6 +283,8 @@ experiment runme {
 		}
 	}
 }
+
+
 
 
 

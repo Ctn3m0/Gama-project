@@ -32,7 +32,7 @@ global {
 	
 	geometry shape <- envelope(grid_data);
 	
-	int nb_goat <- 20;
+	int nb_goat <- 40;
 	
 	geometry free_space <- copy(shape);
 
@@ -40,9 +40,9 @@ global {
 	init {
 		create obstacle number: 100{
 			shape <- flip(0.6) ? rectangle(1000+rnd(2000), 1000+rnd(2000)) : circle(2000 + rnd(1000));
-			safezone <- (square(3000) intersection world.shape) intersection circle(3000);
+			ozone <- (square(3000) intersection world.shape) intersection circle(3000);
 	
-			b <- plot overlapping safezone;
+			b <- plot overlapping ozone;
 			
 			loop p over: b {
 				p.is_taken <- true;
@@ -63,7 +63,7 @@ species goat skills: [moving]{
 	
 	geometry friend_zone;
 	
-	float max_area;
+//	float max_area;
 	
 	list<obstacle> neighbors1 update: obstacle at_distance obstacle_distance;
 	
@@ -125,7 +125,7 @@ species goat skills: [moving]{
 	reflex update_friendzone {
 		friend_zone <- (cone(heading-50,heading+50) intersection world.shape) intersection circle(friend_distance);
 		
-		max_area <- friend_zone.area; 
+//		max_area <- friend_zone.area; 
 		
 		
 		if (friend_zone != nil) {
@@ -163,7 +163,7 @@ species goal {
 }
 
 species obstacle {
-	geometry safezone;
+	geometry ozone;
 	
 	list<plot> b;
 	
